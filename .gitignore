@@ -1,0 +1,52 @@
+# --- Sensitive Data / Secrets ---
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# --- Environment & Package Dependencies ---
+node_modules/
+/venv/
+/.venv/
+/env/
+__pycache__/
+*.pyc
+.pnp
+.pnp.js
+
+# --- Build & Output Folders ---
+/dist/
+/build/
+/out/
+*.exe
+*.dll
+*.so
+
+# --- Local Databases ---
+*.sqlite3
+*.db
+/postgres-data/
+
+# --- Logs and Runtime Diagnostics ---
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- IDEs and Editor Noise ---
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# --- OS Specific Files ---
+.DS_Store
+.DS_Store?
+ehthumbs.db
+Thumbs.db
