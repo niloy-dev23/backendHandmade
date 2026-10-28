@@ -1,4 +1,5 @@
 const userModel = require('../models/userModel')
+const {hashToken} = require('../helpers/tokenHelper')
 
 const registration = async (req, res) => {
     try {
@@ -67,6 +68,62 @@ const registration = async (req, res) => {
             error: error.message
         })
     }
+}
+
+const verifyEmail = async (req, res)=>{
+    try {
+        const token = req.query.token || req.body.token
+        if(!token){
+            return res.status(400).json({
+                success:false,
+                message:"Verification Token Required"
+            })
+        }
+        const hashedToken = hashToken(token)
+        const user = await userModel.findOne({emailVerificationToken: hashedToken})
+        .select('+emailVerificationToken +emailVerificationTokenExpires')
+
+        if(!user){
+            return res.status(400).json({
+                success:false,
+                message:"Invalid Token"
+            })
+        }
+        if(user.isEmailVerified){
+            return res.status(400).json({
+                success:false,
+                message:"Email is already Verified"
+            })
+        }
+        if(!user.emailVerificationTokenExpires || user.emailVerificationTokenExpires < new Date()){
+            return res.status(400).json({
+                success:false,
+                message:"Verification Token Expired. Please request a new token"
+            })
+        }
+        const updatedUser = await userModel.findByIdAndUpdate(user._id, {
+            $set: {isEmailVerified: true},
+            $unset: {
+                emailVerificationToken:1,
+                emailVerificationTokenExpires:1
+            }
+        })
+
+        const verifiedUser = await userModel.findById(user._id)
+
+        res.status(201).json({
+            success:true,
+            message:"Email Verified Successfully",
+            user:verifiedUser.toSafeObject()
+        })
+    }
+    catch(error){
+        return res.status(400).json({
+            success:false,
+            message:error
+        })
+    }
+
 }
 
 module.exports = registration
