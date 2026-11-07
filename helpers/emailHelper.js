@@ -1,0 +1,1 @@
+const nodemailer = reuire('nodemailer')

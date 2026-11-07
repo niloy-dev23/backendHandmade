@@ -126,4 +126,40 @@ const verifyEmail = async (req, res)=>{
 
 }
 
+const login = async (req, res) => {
+    const {email, password} = req.body
+
+    if(!email || !password){
+        return res.status(400).json({
+            success:false,
+            message:"Please give email and password"
+        })
+    }
+
+    const user = await userModel.findOne({email: email.toLowerCase()}).select('+password')
+    if(!user){
+        return res.status(400).json({
+            success:false,
+            message:"No email exists in this name"
+        })
+    }
+
+    const passwordMatch = await user.comparePassword(password)
+    if(!passwordMatch){
+        return res.status(400).json({
+            success:false,
+            message:"Invalid Password"
+        })
+    }
+
+    if(!isEmailVerified){
+        return res.status(400).json({
+            success:false,
+            message:"Please verify your email before logging in"
+        })
+    }
+
+    
+}
+
 module.exports = registration
